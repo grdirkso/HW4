@@ -57,22 +57,25 @@ public class HW4 {
 		System.out.println("5) Add a new agent");
 		System.out.println("6) Quit");
 		Scanner scanner = new Scanner(System.in);
-		String userInput = scanner.nextLine();
-		switch(userInput){
-			case "1": findAandC();
-				  break;
-			case "2": addClient();
-				  purchase();
-				  break;
-			case "3": policiesSold();
-				  break;
-			case "4": cancelPolicy();
-				  break;
-			case "5": addAgent();
-				  break;
-			case "6": quit();
-				  break;
-			default: menu(); 
+		String userInput = "";
+		while(userInput != "6"){
+			userInput = scanner.nextLine();
+			switch(userInput){
+				case "1": findAandC();
+					  break;
+				case "2": addClient();
+					  purchase();
+				  	  break;
+				case "3": policiesSold();
+					  break;
+				case "4": cancelPolicy();
+					  break;
+				case "5": addAgent();
+				 	  break;
+				case "6": quit();
+				 	  break;
+				default: System.out.println("That is not an accepted option, plese refere to the menu"); 
+			}
 		}		
 	}
 	public void connect(String Username, String mysqlPassword) throws Exception {
