@@ -5,14 +5,6 @@ public class HW4 {
 	private Connection connection;
 	private Statement statement;
 	
-	public void findAandC(){}
-	public void addClient(){}
-	public void purchase() {}	
-	public void policiesSold() {}
-	public void cancelPolicy() {}
-	public void addAgent() {}
-	public void quit() {}
-	
 	public HW4() {
 		connection = null;
 		statement = null;
