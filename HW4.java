@@ -38,9 +38,10 @@ public class HW4 {
 		System.out.println("Option 5");	
 	}
 	static void quit() {
-		System.out.println("Option 6");
+
 	}
 	static void menu(){
+		boolean quit = false;
 		System.out.println("Select and option from the menu below");
 		System.out.println("1) Find all agents and clients in a given city");
 		System.out.println("2) Add a new client, then purchase an available policy from a particular client");
@@ -50,7 +51,7 @@ public class HW4 {
 		System.out.println("6) Quit");
 		Scanner scanner = new Scanner(System.in);
 		String userInput = "";
-		while(userInput != "6"){
+		while(!quit){
 			userInput = scanner.nextLine();
 			switch(userInput){
 				case "1": findAandC();
@@ -64,7 +65,7 @@ public class HW4 {
 					  break;
 				case "5": addAgent();
 				 	  break;
-				case "6": quit();
+				case "6": quit = true;
 				 	  break;
 				default: System.out.println("That is not an accepted option, plese refere to the menu"); 
 			}
