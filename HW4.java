@@ -15,32 +15,49 @@ public class HW4 {
 		String Password="ARKANSAS2019!";
 		HW4 db = new HW4();
 		db.connect(Username, Password);
-		menu();
+		db.menu();
 	}
 
 
-	static void findAandC(){
-		System.out.println("Option 1");
-	}
-	static void addClient(){
+	void findAandC() {
+		System.out.println("Option 1: Find all agents and clients in a given city.");
+		System.out.print("What city would you like to search? ");
+		Scanner scan = new Scanner(System.in);
+		String city = scan.nextLine();
+		System.out.println("We will search for agents and clients in " + city + ".");
+		try {
+			statement = connection.createStatement();
+			statement.executeUpdate("USE cggschwe;");
+			System.out.println("Clients in " + city + ":");
+			ResultSet results = statement.executeQuery("SELECT * FROM CLIENTS WHERE C_CITY='"+city+"';");
+			print(results);
+			System.out.println("Agents in "+ city + ":");
+			results = statement.executeQuery("SELECT * FROM AGENTS WHERE A_CITY='"+city+"';");
+			print(results);
+		}
+		catch(SQLException e) {
+			e.printStackTrace();
+		}
+		}
+	void addClient(){
 		System.out.println("Option 2 part 1");
 	}
-	static void purchase() {
+	void purchase() {
 		System.out.println("Option 2 pt 2");
 	}	
-	static void policiesSold() {
+	void policiesSold() {
 		System.out.println("Option 3");
 	}
-	static void cancelPolicy() {
+	void cancelPolicy() {
 		System.out.println("Option 4");
 	}
-	static void addAgent() {
+	void addAgent() {
 		System.out.println("Option 5");	
 	}
-	static void quit() {
+	void quit() {
 
 	}
-	static void menu(){
+	void menu(){
 		boolean quit = false;
 		System.out.println("Select and option from the menu below");
 		System.out.println("1) Find all agents and clients in a given city");
@@ -71,6 +88,36 @@ public class HW4 {
 			}
 		}		
 	}
+	public void print(ResultSet resultSet) throws SQLException {
+        ResultSetMetaData metaData = resultSet.getMetaData();
+        int numColumns = metaData.getColumnCount();
+
+        printRecords(resultSet, numColumns);
+    }
+    // Print the attribute names
+    public void printHeader(ResultSetMetaData metaData, int numColumns) throws SQLException {
+        for (int i = 1; i <= numColumns; i++) {
+            if (i > 1)
+                System.out.print(",  ");
+            System.out.print(metaData.getColumnName(i));
+        }
+        System.out.println();
+    }
+
+    // Print the attribute values for all tuples in the result
+    public void printRecords(ResultSet resultSet, int numColumns) throws SQLException {
+        String columnValue;
+        while (resultSet.next()) {
+            for (int i = 1; i <= numColumns; i++) {
+                if (i > 1)
+                    System.out.print(",  ");
+                columnValue = resultSet.getString(i);
+                System.out.print(columnValue);
+            }
+            System.out.println("");
+        }
+    }
+
 	public void connect(String Username, String mysqlPassword) throws Exception {
         try {
 	  Class.forName("com.mysql.jdbc.Driver"); 	
