@@ -40,7 +40,32 @@ public class HW4 {
 		}
 		}
 	void addClient(){
-		System.out.println("Option 2 part 1");
+		System.out.println("Option 2: Add a new client, then purchase an available policy from a particular agent.");
+		Scanner scan = new Scanner(System.in);
+		String cName;
+		String cCity;
+		String cZip;
+		System.out.println("Enter client’s name");
+		cName = scan.nextLine();
+		System.out.println("Enter client's city");
+		cCity = scan.nextLine();
+		System.out.println("Enter client’s zip");
+		cZip = scan.nextLine();
+		try {
+                        
+                        statement = connection.createStatement();
+                        statement.executeUpdate("USE cggschwe;");
+			ResultSet result = statement.executeQuery("SELECT MAX(C_ID) FROM CLIENTS;");
+			result.first();
+			int C_ID = result.getInt(1)+1; 
+			String query = "INSERT into CLIENTS values ("+ C_ID + ",'" + cName + "','" + cCity + "'," +  cZip +  ");" ;
+                        statement.executeUpdate(query);
+			System.out.println("We will add "+cName+" to our database as a client.");
+                }
+                catch(SQLException e) {
+                        e.printStackTrace();
+                }
+
 	}
 	void purchase() {
 		System.out.println("Option 2 pt 2");
