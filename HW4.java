@@ -106,13 +106,59 @@ public class HW4 {
 		System.out.println("Option 3");
 	}
 	void cancelPolicy() {
-		System.out.println("Option 4");
+		System.out.println("Option 4: cancel a policy.");
+		try {
+			statement = connection.createStatement();
+			statement.executeUpdate("use cggschwe;");
+			System.out.println("Policies sold:");
+			ResultSet result = statement.executeQuery("SELECT * FROM POLICIES_SOLD;");
+			print(result);
+			System.out.println("Enter the PURCHASE_ID of the policy to cancel: ");
+			Scanner scan = new Scanner(System.in);
+			String id = scan.nextLine();
+			statement.executeUpdate("DELETE FROM POLICIES_SOLD WHERE PURCHASE_ID = " + id + ";");
+			result = statement.executeQuery("SELECT * FROM POLICIES_SOLD;");
+			System.out.println("Updated POLICIES_SOLD table");
+			print(result);
+		}
+		catch(SQLException e) {
+			e.printStackTrace();
+		}
 	}
 	void addAgent() {
-		System.out.println("Option 5");	
+		System.out.println("Option 5: add a new agent for a city.");
+		System.out.println("What city are you adding an agent for? ");
+		Scanner scan = new Scanner(System.in);
+		String city = scan.nextLine();
+		System.out.print("What is the agent's id (A_ID starts with 2)? ");
+		String a_id = scan.next();
+		System.out.print("What is the agent's name (A_NAME)? ");
+		String a_name = scan.next();
+		System.out.print("What is the agent's city (A_CITY)? ");
+		String a_city = scan.next();
+		System.out.print("What is the agent's zip (A_ZIP)? ");
+		String a_zip = scan.next();
+		try {
+			statement = connection.createStatement();
+			statement.executeUpdate("use cggschwe;");
+			statement.executeUpdate("INSERT INTO AGENTS VALUES ("+a_id+",'"+a_name+"','"+a_city+"',"+a_zip+");");
+			ResultSet result = statement.executeQuery("SELECT * FROM AGENTS;");
+			System.out.println("Updated Agents table:");
+			print(result);
+		}
+		catch(SQLException e){
+			e.printStackTrace();
+		}
 	}
-	void quit() {
-
+	void quit() throws SQLException {
+		if(statement != null && connection != null) { 
+		statement.close();
+		connection.close();
+		System.out.println("Database successfully closed. See ya.");
+		}
+		else {
+			System.out.println("Your connection has not been opened yet. Sorry to see you leave so soon :'(");
+		}
 	}
 	void menu(){
 		boolean quit = false;
@@ -138,8 +184,14 @@ public class HW4 {
 					  break;
 				case "5": addAgent();
 				 	  break;
-				case "6": quit = true;
-				 	  break;
+				case "6": 
+					  quit = true;
+				 	  try {
+						  quit();
+					  } catch(SQLException e) {
+						  e.printStackTrace();
+					  }
+					  break;
 				default: System.out.println("That is not an accepted option, plese refere to the menu"); 
 			}
 		}		
