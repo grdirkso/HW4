@@ -43,6 +43,7 @@ public class HW4 {
 		}
 	void addClient(){
 		System.out.println("Option 2: Add a new client, then purchase an available policy from a particular agent.");
+		//get all info from user
 		Scanner scan = new Scanner(System.in);
 		String cName;
 		String cCity;
@@ -54,23 +55,28 @@ public class HW4 {
 		System.out.println("Enter client’s zip");
 		cZip = scan.nextLine();
 		try {
-                        
+                        //connect to db
                         statement = connection.createStatement();
                         statement.executeUpdate("USE cggschwe;");
 			ResultSet result = statement.executeQuery("SELECT MAX(C_ID) FROM CLIENTS;");
 			result.first();
-			int C_ID = result.getInt(1)+1; 
-			String query = "INSERT into CLIENTS values ("+ C_ID + ",'" + cName + "','" + cCity + "'," +  cZip +  ");" ;
-                        statement.executeUpdate(query);
-			System.out.println("We will add "+cName+" to our database as a client.");
-			purchase(cCity, C_ID);
+			int C_ID = result.getInt(1)+1;
+			//purchase from agent if everything entered correctly
+			if(purchase(cCity, C_ID) == 2){
+				//add to db 
+				String query = "INSERT into CLIENTS values ("+ C_ID + ",'" + cName + "','" + cCity + "'," +  cZip +  ");" ;
+                        	statement.executeUpdate(query);
+				System.out.println("We will add "+cName+" to our database as a client");
+			} else {
+				System.out.println("Client could not be added to the db"); 
+			}
                 }
                 catch(SQLException e) {
                         e.printStackTrace();
                 }
 
 	}
-	void purchase(String city, int cID) {
+	int purchase(String city, int cID) {
 		//get user unput
 		Scanner scan = new Scanner(System.in);
 		System.out.println("What type of policy would you like to purchase?");
@@ -92,32 +98,52 @@ public class HW4 {
 					//get agent id that user wants to purchase from
 					System.out.println("Provide the id of the Agent that you wish to purchase the policy from");
 					int aID = Integer.parseInt(scan.nextLine()); 
-					//get policy id of policy client wants to purchase
-					System.out.println("Provide the policy id you want to purchase");
-					int pID = Integer.parseInt(scan.nextLine());
-					//get amount of policy from client
-					System.out.println("Please provide the amount of the policy");
-					double amount = Double.parseDouble(scan.nextLine());
-					//firmat amount 
-					DecimalFormat df = new DecimalFormat("#.00");
-					amount = Double.parseDouble(df.format(amount)); 
-					result = statement.executeQuery("SELECT MAX(PURCHASE_ID) FROM POLICIES_SOLD;");
-                        		result.first();
-                        		int purchaseID = result.getInt(1)+1;
-					//insert new row into Policies_sold table
-                        		String query = "INSERT into POLICIES_SOLD values ("+ purchaseID + "," + aID+ "," + cID + "," +  pID + ",CURDATE()," + amount +  ");" ;
-                        		statement.executeUpdate(query);
+					result = statement.executeQuery("SELECT * FROM AGENTS WHERE (A_ID=" + aID  + " AND A_CITY ='"+ city + "');");
+					//if agent id accepted
+					if(result.next()){
+						//get policy id of policy client wants to purchase
+						System.out.println("Provide the policy id you want to purchase");
+						int pID = Integer.parseInt(scan.nextLine());
+						result = statement.executeQuery("SELECT * FROM POLICY WHERE (POLICY_ID =" + pID + " AND TYPE ='"+pType + "');");
+						//if policy id accepted
+						if(result.next()){	
+							//get amount of policy from client
+							System.out.println("Please provide the amount of the policy");
+							double amount = Double.parseDouble(scan.nextLine());
+							//firmat amount 
+							DecimalFormat df = new DecimalFormat("#.00");
+							amount = Double.parseDouble(df.format(amount)); 
+							result = statement.executeQuery("SELECT MAX(PURCHASE_ID) FROM POLICIES_SOLD;");
+                        				result.first();
+                        				int purchaseID = result.getInt(1)+1;
+							//insert new row into Policies_sold table
+                        				String query = "INSERT into POLICIES_SOLD values ("+ purchaseID + "," + aID+ "," + cID + "," +  pID + ",CURDATE()," + amount +  ");" ;
+                        				statement.executeUpdate(query);
+						} else {
+							System.out.println("That policy ID is not an option");
+							return 1;
+						}
+					}
+					else{
+					     System.out.println("That agent ID is not an option");
+					     return 1;
+					}
 				} else {
 					//no agent in clients city 
 					System.out.println("There is not an agent in client's city");
+					return 1;
 				}
 			} else {
 				//if policy type not found
 				System.out.println("Policy type not found");
+				return 1;
 			}
+	
 		} catch(SQLException e) {
 			e.printStackTrace();
+			return 1;
 		}
+		return 2;
 	}	
 	void policiesSold() {
 		System.out.println("Option 3: List all policies sold by a particular agent");
