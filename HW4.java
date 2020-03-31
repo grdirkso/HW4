@@ -20,27 +20,30 @@ public class HW4 {
 		db.menu();
 	}
 
-
+	//Function to implement the 1st option. Finds all agents and clients in a given city. 
 	void findAandC() {
 		System.out.println("Option 1: Find all agents and clients in a given city.");
 		System.out.print("What city would you like to search? ");
 		Scanner scan = new Scanner(System.in);
+		// inputs the city query from the user.
 		String city = scan.nextLine();
 		System.out.println("We will search for agents and clients in " + city + ".");
 		try {
 			statement = connection.createStatement();
 			statement.executeUpdate("USE cggschwe;");
 			System.out.println("Clients in " + city + ":");
+			// queries the SQL database for clients in the inputted city.
 			ResultSet results = statement.executeQuery("SELECT * FROM CLIENTS WHERE C_CITY='"+city+"';");
 			print(results);
 			System.out.println("Agents in "+ city + ":");
+			// queries the SQL database for agents in the inputted city. 
 			results = statement.executeQuery("SELECT * FROM AGENTS WHERE A_CITY='"+city+"';");
 			print(results);
 		}
 		catch(SQLException e) {
 			e.printStackTrace();
 		}
-		}
+	}
 	void addClient(){
 		System.out.println("Option 2: Add a new client, then purchase an available policy from a particular agent.");
 		Scanner scan = new Scanner(System.in);
@@ -118,7 +121,8 @@ public class HW4 {
 		} catch(SQLException e) {
 			e.printStackTrace();
 		}
-	}	
+	}
+	// Function that implements option 3, lists all policies sold by a particular agent. 	
 	void policiesSold() {
 		System.out.println("Option 3: List all policies sold by a particular agent");
 		//get agent name and city from user
@@ -147,6 +151,7 @@ public class HW4 {
 			e.printStackTrace();
 		} 
 	}
+	// Function that implements option 4, cancels a policy. 
 	void cancelPolicy() {
 		System.out.println("Option 4: cancel a policy.");
 		try {
@@ -155,9 +160,11 @@ public class HW4 {
 			System.out.println("Policies sold:");
 			ResultSet result = statement.executeQuery("SELECT * FROM POLICIES_SOLD;");
 			print(result);
+			// inputs the purchase_id of the policy to cancel. 
 			System.out.println("Enter the PURCHASE_ID of the policy to cancel: ");
 			Scanner scan = new Scanner(System.in);
 			String id = scan.nextLine();
+			// delete policy from SQL table.
 			statement.executeUpdate("DELETE FROM POLICIES_SOLD WHERE PURCHASE_ID = " + id + ";");
 			result = statement.executeQuery("SELECT * FROM POLICIES_SOLD;");
 			System.out.println("Updated POLICIES_SOLD table");
@@ -167,10 +174,12 @@ public class HW4 {
 			e.printStackTrace();
 		}
 	}
+	// Function that implements option 5, adds a new agent for a city. 
 	void addAgent() {
 		System.out.println("Option 5: add a new agent for a city.");
 		System.out.println("What city are you adding an agent for? ");
 		Scanner scan = new Scanner(System.in);
+		// inputs the agent's information that the user wishes to add to the SQL database. 
 		String city = scan.nextLine();
 		System.out.print("What is the agent's id (A_ID starts with 2)? ");
 		String a_id = scan.next();
@@ -181,6 +190,7 @@ public class HW4 {
 		System.out.print("What is the agent's zip (A_ZIP)? ");
 		String a_zip = scan.next();
 		try {
+			// adds the inputted agent to the SQL table. 
 			statement = connection.createStatement();
 			statement.executeUpdate("use cggschwe;");
 			statement.executeUpdate("INSERT INTO AGENTS VALUES ("+a_id+",'"+a_name+"','"+a_city+"',"+a_zip+");");
