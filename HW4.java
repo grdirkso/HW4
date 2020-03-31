@@ -79,32 +79,38 @@ public class HW4 {
 			//check if policy type exists
 			ResultSet result = statement.executeQuery("SELECT * FROM POLICY WHERE TYPE = '" + pType + "';");
 			if(result.next()){
-				//show all agents un client's city
-				System.out.println("Policy type found. Here are the agents in " + city);
-				result = statement.executeQuery("SELECT * FROM AGENTS WHERE A_CITY ='" + city + "';");
-				print(result);
-				//show all policies of type client is looking for 
-				System.out.println("These are all the available policies");
-				result = statement.executeQuery("SELECT * FROM POLICY WHERE TYPE ='"+pType+"';");
-				print(result);
-				//get agent id that user wants to purchase from
-				System.out.println("Provide the id of the Agent that you wish to purchase the policy from");
-				int aID = Integer.parseInt(scan.nextLine()); 
-				//get policy id of policy client wants to purchase
-				System.out.println("Provide the policy id you want to purchase");
-				int pID = Integer.parseInt(scan.nextLine());
-				//get amount of policy from client
-				System.out.println("Please provide the amount of the policy");
-				double amount = Double.parseDouble(scan.nextLine());
-				//firmat amount 
-				DecimalFormat df = new DecimalFormat("#.00");
-				amount = Double.parseDouble(df.format(amount)); 
-				result = statement.executeQuery("SELECT MAX(PURCHASE_ID) FROM POLICIES_SOLD;");
-                        	result.first();
-                        	int purchaseID = result.getInt(1)+1;
-				//insert new row into Policies_sold table
-                        	String query = "INSERT into POLICIES_SOLD values ("+ purchaseID + "," + aID+ "," + cID + "," +  pID + ",CURDATE()," + amount +  ");" ;
-                        	statement.executeUpdate(query);
+				ResultSet aCity = statement.executeQuery("SELECT * FROM AGENTS WHERE A_CITY = '" + city+ "';");
+				if(aCity.next()){
+					//show all agents un client's city
+					System.out.println("Policy type found. Here are the agents in " + city);
+					result = statement.executeQuery("SELECT * FROM AGENTS WHERE A_CITY ='" + city + "';");
+					print(result);
+					//show all policies of type client is looking for 
+					System.out.println("These are all the available policies");
+					result = statement.executeQuery("SELECT * FROM POLICY WHERE TYPE ='"+pType+"';");
+					print(result);
+					//get agent id that user wants to purchase from
+					System.out.println("Provide the id of the Agent that you wish to purchase the policy from");
+					int aID = Integer.parseInt(scan.nextLine()); 
+					//get policy id of policy client wants to purchase
+					System.out.println("Provide the policy id you want to purchase");
+					int pID = Integer.parseInt(scan.nextLine());
+					//get amount of policy from client
+					System.out.println("Please provide the amount of the policy");
+					double amount = Double.parseDouble(scan.nextLine());
+					//firmat amount 
+					DecimalFormat df = new DecimalFormat("#.00");
+					amount = Double.parseDouble(df.format(amount)); 
+					result = statement.executeQuery("SELECT MAX(PURCHASE_ID) FROM POLICIES_SOLD;");
+                        		result.first();
+                        		int purchaseID = result.getInt(1)+1;
+					//insert new row into Policies_sold table
+                        		String query = "INSERT into POLICIES_SOLD values ("+ purchaseID + "," + aID+ "," + cID + "," +  pID + ",CURDATE()," + amount +  ");" ;
+                        		statement.executeUpdate(query);
+				} else {
+					//no agent in clients city 
+					System.out.println("There is not an agent in client's city");
+				}
 			} else {
 				//if policy type not found
 				System.out.println("Policy type not found");
@@ -135,7 +141,7 @@ public class HW4 {
 				print(result);
 			//agent not found
 			}else {
-				System.out.println("Either that Agent doesnt exist, or they are not in the city provided");
+				System.out.println("Either that Agent doesn't exist, or they are not in the city provided");
 			}
 		} catch(SQLException e) {
 			e.printStackTrace();
